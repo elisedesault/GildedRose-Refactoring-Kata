@@ -4,55 +4,70 @@ class GildedRose(var items: Array<Item>) {
 
     fun updateQuality() {
         for (i in items.indices) {
-            if (items[i].name != "Aged Brie" && items[i].name != "Backstage passes to a TAFKAL80ETC concert") {
-                if (items[i].quality > 0) {
-                    if (items[i].name != "Sulfuras, Hand of Ragnaros") {
-                        items[i].quality = items[i].quality - 1
-                    }
+            when (items[i].name) {
+                agedBrie -> {
+                    evaluateQualityForAgedBrie(items[i])
                 }
-            } else {
-                if (items[i].quality < 50) {
-                    items[i].quality = items[i].quality + 1
-
-                    if (items[i].name == "Backstage passes to a TAFKAL80ETC concert") {
-                        if (items[i].sellIn < 11) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1
-                            }
-                        }
-
-                        if (items[i].sellIn < 6) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1
-                            }
-                        }
-                    }
+                backstage -> {
+                    evaluateQualityForBackstage(items[i])
                 }
-            }
-
-            if (items[i].name != "Sulfuras, Hand of Ragnaros") {
-                items[i].sellIn = items[i].sellIn - 1
-            }
-
-            if (items[i].sellIn < 0) {
-                if (items[i].name != "Aged Brie") {
-                    if (items[i].name != "Backstage passes to a TAFKAL80ETC concert") {
-                        if (items[i].quality > 0) {
-                            if (items[i].name != "Sulfuras, Hand of Ragnaros") {
-                                items[i].quality = items[i].quality - 1
-                            }
-                        }
-                    } else {
-                        items[i].quality = items[i].quality - items[i].quality
-                    }
-                } else {
-                    if (items[i].quality < 50) {
-                        items[i].quality = items[i].quality + 1
-                    }
+                sulfuras -> {
+                }
+                else -> {
+                    evaluateQualityForRose(items[i])
                 }
             }
         }
     }
 
+    private fun evaluateQualityForRose(item: Item) {
+        item.apply {
+            if (!isQualityZero(quality)) {
+                quality -= 1
+            }
+            sellIn -= 1
+        }
+    }
+
+    private fun evaluateQualityForBackstage(item: Item) {
+        item.apply {
+            if (!isMaxQualityReached(quality)) {
+                quality += 1
+
+                if (sellIn < 11 && !isMaxQualityReached(quality)) {
+                    quality += 1
+                }
+
+                if (sellIn < 6 && !isMaxQualityReached(quality)) {
+                    quality += 1
+                }
+            }
+
+            sellIn -= 1
+
+            if (isSellInPassed(sellIn)) {
+                quality = 0
+            }
+        }
+    }
+
+    private fun evaluateQualityForAgedBrie(item: Item) {
+        item.apply {
+            if (!isMaxQualityReached(quality)) {
+                quality += 1
+            }
+            sellIn -= 1
+        }
+    }
+
+    private fun isMaxQualityReached(quality: Int) = quality >= 50
+    private fun isQualityZero(quality: Int) = quality == 0
+    private fun isSellInPassed(sellInValue: Int) = sellInValue < 0
+
+    companion object{
+        private const val agedBrie = "Aged Brie"
+        private const val backstage = "Backstage passes to a TAFKAL80ETC concert"
+        private const val sulfuras = "Sulfuras, Hand of Ragnaros"
+    }
 }
 
