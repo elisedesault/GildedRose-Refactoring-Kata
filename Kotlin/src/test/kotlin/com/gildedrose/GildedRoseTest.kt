@@ -87,7 +87,7 @@ internal class GildedRoseTest {
     @Test
     fun checkQuality_Sulfuras_whenNeverDecreases() {
         val sellIn = 5
-        val quality = 46
+        val quality = 80
         val items = arrayOf<Item>(Item("Sulfuras, Hand of Ragnaros", sellIn, quality))
         val app = GildedRose(items)
 
@@ -101,7 +101,7 @@ internal class GildedRoseTest {
     @Test
     fun checkSellIn_Sulfuras_whenNeverHasToBeSold() {
         val sellIn = 5
-        val quality = 46
+        val quality = 80
         val items = arrayOf<Item>(Item("Sulfuras, Hand of Ragnaros", sellIn, quality))
         val app = GildedRose(items)
 
@@ -165,6 +165,34 @@ internal class GildedRoseTest {
 
         app.updateQuality()
         assertEquals(0, app.items[0].quality, "Quality drops on sellIn Day")
+    }
+
+    @Test
+    fun checkQuality_Conjured_whenQualityDecreasesTwiceAsFastAsNormal(){
+        val sellIn = 4
+        val quality = 20
+        val items = arrayOf<Item>(Item("Conjured", sellIn, quality))
+        val app = GildedRose(items)
+        for (day in sellIn downTo 0) {
+            app.updateQuality()
+        }
+
+        app.updateQuality()
+        assertEquals(quality - 12, app.items[0].quality, "Quality when sellIn passed")
+    }
+
+    @Test
+    fun checkQuality_Sulfuras_whenNeverAlters(){
+        val sellIn = 4
+        val quality = 80
+        val items = arrayOf<Item>(Item("Sulfuras, Hand of Ragnaros", sellIn, quality))
+        val app = GildedRose(items)
+        for (day in sellIn downTo 0) {
+            app.updateQuality()
+        }
+
+        app.updateQuality()
+        assertEquals(quality , app.items[0].quality, "Quality always the same")
     }
 }
 
