@@ -12,6 +12,10 @@ class GildedRose(var items: Array<Item>) {
                     evaluateQualityForBackstage(items[i])
                 }
                 sulfuras -> {
+                    evaluateQualityForSulfuras(items[i])
+                }
+                conjured -> {
+                    evaluateQualityForConjured(items[i])
                 }
                 else -> {
                     evaluateQualityForRose(items[i])
@@ -20,6 +24,7 @@ class GildedRose(var items: Array<Item>) {
         }
     }
 
+
     private fun evaluateQualityForRose(item: Item) {
         item.apply {
             if (!isQualityZero(quality)) {
@@ -27,6 +32,19 @@ class GildedRose(var items: Array<Item>) {
             }
             sellIn -= 1
         }
+    }
+
+    private fun evaluateQualityForConjured(item: Item) {
+        item.apply {
+            if (!isQualityZero(quality)) {
+                quality -= 2
+            }
+            sellIn -= 1
+        }
+    }
+
+    private fun evaluateQualityForSulfuras(item: Item) {
+        item.quality = 80
     }
 
     private fun evaluateQualityForBackstage(item: Item) {
@@ -64,10 +82,11 @@ class GildedRose(var items: Array<Item>) {
     private fun isQualityZero(quality: Int) = quality == 0
     private fun isSellInPassed(sellInValue: Int) = sellInValue < 0
 
-    companion object{
+    companion object {
         private const val agedBrie = "Aged Brie"
         private const val backstage = "Backstage passes to a TAFKAL80ETC concert"
         private const val sulfuras = "Sulfuras, Hand of Ragnaros"
+        private const val conjured = "Conjured"
     }
 }
 
